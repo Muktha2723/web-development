@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Stopwatch</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    #display {
+      font-size: 2em;
+      margin: 20px;
+    }
+    button {
+      font-size: 1em;
+      padding: 10px 20px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Stopwatch</h1>
+  <div id="display">00:00:00</div>
+  <button id="startPause">Start</button>
+  <button id="reset">Reset</button>
+  <button id="lap">Lap</button>
+  <ul id="laps"></ul>
+
+  <script>
+    // JavaScript Code Below
+    let startTime;
+    let elapsedTime = 0;
+    let timerInterval;
+    let isRunning = false;
+
+    const display = document.getElementById('display');
+    const startPauseButton = document.getElementById('startPause');
+    const resetButton = document.getElementById('reset');
+    const lapButton = document.getElementById('lap');
+    const lapsList = document.getElementById('laps');
+
+    function formatTime(milliseconds) {
+      const date = new Date(milliseconds);
+      return date.toISOString().substr(11, 8);
+    }
+
+    function updateDisplay() {
+      display.textContent = formatTime(elapsedTime);
+    }
+
+    function startPause() {
+      if (isRunning) {
+        clearInterval(timerInterval);
+        startPauseButton.textContent = 'Start';
+      } else {
+        startTime = Date.now() - elapsedTime;
+        timerInterval = setInterval(() => {
+          elapsedTime = Date.now() - startTime;
+          updateDisplay();
+        }, 10);
+        startPauseButton.textContent = 'Pause';
+      }
+      isRunning = !isRunning;
+    }
+
+    function reset() {
+      clearInterval(timerInterval);
+      elapsedTime = 0;
+      updateDisplay();
+      startPauseButton.textContent = 'Start';
+      isRunning = false;
+      lapsList.innerHTML = '';
+    }
+
+    function lap() {
+      const lapTime = formatTime(elapsedTime);
+      const lapItem = document.createElement('li');
+      lapItem.textContent = lapTime;
+      lapsList.appendChild(lapItem);
+    }
+
+    startPauseButton.addEventListener('click', startPause);
+    resetButton.addEventListener('click', reset);
+    lapButton.addEventListener('click', lap);
+  </script>
+</body>
+</html>
